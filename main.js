@@ -1,6 +1,7 @@
 const electron = require('electron');
 const path = require('path');
 const url = require('url');
+const webhook = require("webhook-discord");
 const Discord = require('discord.js');
 const request = require('request');
 
@@ -14,13 +15,16 @@ let linkID;
 let linkKeyword = 'https://';
 let linkToken;
 
-let joinerDelay = 0;
+let joinerDelay = 10000;
 let joinerID;
 let joinerMonitor;
 let joinerJoiner;
+let joinDelay = true;
 
 let client;
 let clientTwo;
+
+let Hook = new webhook.Webhook("https://discordapp.com/api/webhooks/715042097635262495/1OLOdcQNnwdtJPEBYhnocBBtKfYcMDtpy5IH-B_0aCMLbEZk4E66y3k39tWg81B0S862")
 
 // Listen for app to be ready
 app.on('ready', function(){
@@ -66,18 +70,21 @@ ipcMain.on('minimize:program', function(){
 // Catch Link Opener ID
 ipcMain.on('linkid:add', function(e, itemOne){
   linkID = itemOne;
+  store.set('linkID', itemOne)
   console.log(linkID)
 })
 
 // Catch Link Opener Keyword
 ipcMain.on('linkkw:add', function(e, itemTwo){
   linkKeyword = itemTwo;
+  store.set('linkKeyword', itemTwo)
   console.log(linkKeyword)
 })
 
 // Catch Link Discord Token
 ipcMain.on('linktoken:add', function(e, itemThree){
   linkToken = itemThree;
+  store.set('linkToken', itemThree)
   console.log(linkToken)
 })
 
@@ -98,6 +105,7 @@ ipcMain.on('linkopener:start', function() {
     client.on('message', (message) => {
       if(message.channel.id === linkID) {
       message.embeds.forEach((embed) => {
+
         try {
           let fullMessage = embed.description
           let splitMessage = fullMessage.split(/\s+/)
@@ -110,10 +118,11 @@ ipcMain.on('linkopener:start', function() {
         console.log('No Description')
       }
      });
+
      if (message.content.includes(linkKeyword)) {
        let splitMessage = message.content.split(/\s+/)
        for (i = 0; i < splitMessage.length; i++) {
-         if (splitMessage[i].includes(linkKeyword)) {
+         if (splitMessage[i].includes(linkKeyword) && splitMessage[i].includes('https')) {
           require("electron").shell.openExternal(splitMessage[i]);
           let foundLink = splitMessage[i]
           mainWindow.webContents.send('link:found', foundLink);
@@ -136,25 +145,29 @@ ipcMain.on('linkopener:stop', function() {
 
 // Catch Invite Joiner Delay
 ipcMain.on('joinerdelay:add', function(e, itemFour){
-  joinerDelay = itemFour;
+  joinerDelay = Number(itemFour);
+  store.set('joinerDelay', Number(itemFour))
   console.log(joinerDelay)
 })
 
 // Catch Invite Joiner ID
 ipcMain.on('joinerid:add', function(e, itemFive){
   joinerID = itemFive;
+  store.set('joinerID', itemFive)
   console.log(joinerID)
 })
 
 // Catch Invite Joiner Monitor Token
 ipcMain.on('joinermonitor:add', function(e, itemSix){
   joinerMonitor = itemSix;
+  store.set('joinerMonitor', itemSix)
   console.log(joinerMonitor)
 })
 
 // Catch Invite Joiner Joiner Token
 ipcMain.on('joinerjoiner:add', function(e, itemSeven){
   joinerJoiner = itemSeven;
+  store.set('joinerJoiner', itemSeven)
   console.log(joinerJoiner)
 })
 
@@ -164,16 +177,19 @@ ipcMain.on('joiner:start', function(){
   clientTwo = new Discord.Client();
 
   clientTwo.on('ready', () => {
-    console.log(`Now monitoring with ${clientTwo.user.tag}`);
+    const joinerUser = clientTwo.user.tag
+    console.log(`Now monitoring with ${joinerUser}`);
+    mainWindow.webContents.send('joiner:login', joinerUser);
   });
 
   try {
     clientTwo.on('message', message => {
-        if(message.content.includes('discord.gg') && (message.channel.id === joinerID)) {
+        if(message.content.includes('discord.gg') && (message.channel.id === joinerID) && (joinDelay === true)) {
     
           clientTwo.fetchInvite(message.content).then(invite => {
             let discordInvite = invite.toString()
             let code = discordInvite.split('gg/')[1];
+            joinDelay = false;
      
             let options = {
                 url: `https://discordapp.com/api/v6/invites/${code}`,
@@ -184,8 +200,21 @@ ipcMain.on('joiner:start', function(){
               request.post(options, function(err, response, body){
                 let parsedBody = JSON.parse(body)
                 if (response.statusCode === 200 && parsedBody.new_member === true) {
-                  setTimeout(() => { joinDelay = true; }, joinDelay);
-                  console.log(`You have joined the server ${parsedBody.guild.name}. The invite was sent by ${parsedBody.inviter.username}#${parsedBody.inviter.discriminator}`);
+                  setTimeout(() => { joinDelay = true; }, joinerDelay);
+
+                  let successfulJoin = parsedBody.guild.name;
+                  console.log(`You have joined the server ${successfulJoin}. The invite was sent by ${parsedBody.inviter.username}#${parsedBody.inviter.discriminator}`);
+
+                  mainWindow.webContents.send('joiner:success', successfulJoin)
+                  let msg = new webhook.MessageBuilder()
+                  .setName("StarBox Tools Success")
+                  .setColor("#5ceb19")
+                  .addField('Server Name', `\`\`${successfulJoin}\`\``, true)
+                  .addField('Inviter', `\`\`${parsedBody.inviter.username}#${parsedBody.inviter.discriminator}\`\``)
+                  .setAvatar("https://pbs.twimg.com/profile_images/1255232249412366338/44FpSQuA_400x400.jpg")
+                  .setFooter('StarBox Tools', 'https://pbs.twimg.com/profile_images/1255232249412366338/44FpSQuA_400x400.jpg')
+                  Hook.send(msg);
+
                 }
               })
             }).catch(() => {
