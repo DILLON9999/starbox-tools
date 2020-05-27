@@ -178,12 +178,45 @@
             }
         </script>
 
+        <script type="text/javascript">
+            const fs = require('fs')
+
+            let rawdataThree = fs.readFileSync('./saved-info/link-token.json');
+            let storedLinkToken = JSON.parse(rawdataThree);
+            let storedLinkTokenText = storedLinkToken.linkOpenToken
+            document.getElementById("linkToken").value = storedLinkTokenText
+
+            let rawdataTwo = fs.readFileSync('./saved-info/joiner-monitor.json');
+            let storedJoinerMonitor = JSON.parse(rawdataTwo)
+            let storedJoinerMonitorText = storedJoinerMonitor.joinerMonitorToken
+            document.getElementById("joinerMonitor").value = storedJoinerMonitorText
+
+            let rawdata = fs.readFileSync('./saved-info/joiner-joiner.json');
+            let storedJoinerJoiner = JSON.parse(rawdata);
+            let storedJoinerJoinerText = storedJoinerJoiner.joinerJoinerToken
+            document.getElementById("joinerJoiner").value = storedJoinerJoinerText
+
+        </script>
+
         <script>
             const electron = require('electron');
             const {ipcRenderer} = electron;
             const linkConsole = document.querySelector('#linkConsole');
             const joinerConsole = document.querySelector('#joinerConsole')
 
+
+// Preset Stored Info
+            
+            // let rawdata = fs.readFileSync('./saved-info/joiner-joiner');
+            // let storedJoinerJoiner = JSON.parse(rawdata);
+            // document.getElementById("linkToken").value = storedJoinerJoiner;
+
+            // let rawdataTwo = fs.readFileSync('./saved-info/joiner-monitor');
+            // let storedJoinerMonitor = JSON.parse(rawdataTwo);
+
+            // let rawdataThree = fs.readFileSync('./saved-info/link-token');
+            // let storedLinkToken = JSON.parse(rawdataThree);
+            
 
 // Close and Minimize Buttons
 

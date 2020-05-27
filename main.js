@@ -1,6 +1,7 @@
 const electron = require('electron');
 const path = require('path');
 const url = require('url');
+const fs = require('fs')
 const webhook = require("webhook-discord");
 const Discord = require('discord.js');
 const request = require('request');
@@ -9,16 +10,28 @@ process.env.NODE_ENV = 'development';
 
 const {app, BrowserWindow, Menu, ipcMain, remote} = electron;
 
+let rawdataThree = fs.readFileSync('./saved-info/link-token.json');
+let storedLinkToken = JSON.parse(rawdataThree);
+let storedLinkTokenText = storedLinkToken.linkOpenToken
+
+let rawdataTwo = fs.readFileSync('./saved-info/joiner-monitor.json');
+let storedJoinerMonitor = JSON.parse(rawdataTwo)
+let storedJoinerMonitorText = storedJoinerMonitor.joinerMonitorToken
+
+let rawdata = fs.readFileSync('./saved-info/joiner-joiner.json');
+let storedJoinerJoiner = JSON.parse(rawdata);
+let storedJoinerJoinerText = storedJoinerJoiner.joinerJoinerToken
+
 let mainWindow;
 
 let linkID;
 let linkKeyword = 'https://';
-let linkToken;
+let linkToken = storedLinkTokenText;
 
 let joinerDelay = 10000;
 let joinerID;
-let joinerMonitor;
-let joinerJoiner;
+let joinerMonitor = storedJoinerMonitorText;
+let joinerJoiner = storedJoinerJoinerText;
 let joinDelay = true;
 
 let client;
@@ -70,22 +83,20 @@ ipcMain.on('minimize:program', function(){
 // Catch Link Opener ID
 ipcMain.on('linkid:add', function(e, itemOne){
   linkID = itemOne;
-  store.set('linkID', itemOne)
   console.log(linkID)
 })
 
 // Catch Link Opener Keyword
 ipcMain.on('linkkw:add', function(e, itemTwo){
   linkKeyword = itemTwo;
-  store.set('linkKeyword', itemTwo)
   console.log(linkKeyword)
 })
 
 // Catch Link Discord Token
 ipcMain.on('linktoken:add', function(e, itemThree){
   linkToken = itemThree;
-  store.set('linkToken', itemThree)
   console.log(linkToken)
+  fs.writeFile('./saved-info/link-token.json', `{"linkOpenToken": "${linkToken}"}` , function(err) { } )
 })
 
 // Start Link Opener On Button Press
@@ -146,29 +157,27 @@ ipcMain.on('linkopener:stop', function() {
 // Catch Invite Joiner Delay
 ipcMain.on('joinerdelay:add', function(e, itemFour){
   joinerDelay = Number(itemFour);
-  store.set('joinerDelay', Number(itemFour))
   console.log(joinerDelay)
 })
 
 // Catch Invite Joiner ID
 ipcMain.on('joinerid:add', function(e, itemFive){
   joinerID = itemFive;
-  store.set('joinerID', itemFive)
   console.log(joinerID)
 })
 
 // Catch Invite Joiner Monitor Token
 ipcMain.on('joinermonitor:add', function(e, itemSix){
   joinerMonitor = itemSix;
-  store.set('joinerMonitor', itemSix)
   console.log(joinerMonitor)
+  fs.writeFile('./saved-info/joiner-monitor.json', `{"joinerMonitorToken": "${joinerMonitor}"}` , function(err) { } )
 })
 
 // Catch Invite Joiner Joiner Token
 ipcMain.on('joinerjoiner:add', function(e, itemSeven){
   joinerJoiner = itemSeven;
-  store.set('joinerJoiner', itemSeven)
   console.log(joinerJoiner)
+  fs.writeFile('./saved-info/joiner-joiner.json', `{"joinerJoinerToken": "${joinerJoiner}"}` , function(err) { } )
 })
 
 // Start Invite Joiner
