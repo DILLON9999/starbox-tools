@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="./css/main.css">
+    </head>
+    <body>
+        <div class="app-container">
+            <button class="traffic-light red" id="close"></button>
+            <button class="traffic-light yellow" id="minimize"></button>
+            <div class="sidebar">
+                <p class="title"><span style="color: #FFF">Star</span><span style="color: rgb( 108, 71, 255 );">Box</span></p>
+            </div>
+                
+            <div class="login">
+                <button class="button activate" id="login-button">Login</button>
+            </div>
+
+        </div>
+            </div>
+        </div>
+
+        <script>
+            const electron = require('electron');
+            const {ipcRenderer} = electron;
+            const linkConsole = document.querySelector('#linkConsole');
+            const joinerConsole = document.querySelector('#joinerConsole')      
+
+// Close and Minimize Buttons
+
+
+            // Close Program
+            document.querySelector('#close').addEventListener('click', closeProgram);
+
+            function closeProgram(e){
+                e.preventDefault();
+                ipcRenderer.send('close:program')
+            }
+
+            // Minimize Program
+            document.querySelector('#minimize').addEventListener('click', minimizeProgram);
+
+            function minimizeProgram(e){
+                e.preventDefault();
+                ipcRenderer.send('minimize:program')
+            }
+
+            // Login To Discord
+            document.querySelector('#login-button').addEventListener('click', botLogin);
+
+            function botLogin(e){
+                e.preventDefault();
+                ipcRenderer.send('bot:login')
+            }
+        </script>
+
+    </body>
+    </html>

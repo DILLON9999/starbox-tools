@@ -31,6 +31,14 @@ div {
     width: 810px;
     height: 660px;
 }
+.login {
+    height: 200px;
+    width: 300px;
+
+    position: absolute;
+    top: 43%;
+    left: 38%;
+}
 .traffic-light {
     position: absolute;
     top: 35px;

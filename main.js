@@ -36,9 +36,21 @@ let joinDelay = true;
 
 let client;
 let clientTwo;
+let discordToken;
 
 let Hook = new webhook.Webhook("https://discordapp.com/api/webhooks/715042097635262495/1OLOdcQNnwdtJPEBYhnocBBtKfYcMDtpy5IH-B_0aCMLbEZk4E66y3k39tWg81B0S862")
 
+function discordAuth() {
+  const electron = require('electron')
+  const discordWindow = new BrowserWindow({
+    width: 1024,
+    height: 576,
+    webPreferences: {
+      nodeIntegration: false
+    }
+  })
+  discordWindow.loadURL('https://discord.com/api/oauth2/authorize?client_id=706679324744613959&redirect_uri=http%3A%2F%2Fgoogle.com&response_type=code&scope=guilds')
+}
 // Listen for app to be ready
 app.on('ready', function(){
     // Create new window
@@ -51,7 +63,7 @@ app.on('ready', function(){
     });
     // Load html in window
     mainWindow.loadURL(url.format({
-      pathname: path.join(__dirname, 'index.html'),
+      pathname: path.join(__dirname, 'load.html'),
       protocol: 'file:',
       slashes:true
     }));
@@ -69,6 +81,46 @@ app.on('ready', function(){
     // Insert menu
     Menu.setApplicationMenu(mainMenu);
 });
+
+
+// Login To Discord
+ipcMain.on('bot:login', function(){
+  const discordWindow = new BrowserWindow({
+    width: 800,
+    height: 576,
+    webPreferences: {
+      nodeIntegration: false
+    }
+  })
+  discordWindow.loadURL('https://discord.com/api/oauth2/authorize?client_id=706679324744613959&redirect_uri=http%3A%2F%2Fgoogle.com&response_type=token&scope=identify')
+
+  discordWindow.show();
+  // 'will-navigate' is an event emitted when the window.location changes
+  // newUrl should contain the tokens you need
+  discordWindow.webContents.on('will-navigate', function (event, newUrl) {
+      console.log(newUrl);
+      discordToken = newUrl.split('token=').pop().split('&expires')[0];
+      console.log(discordToken)
+
+      discordWindow.close()
+
+      let options = {
+        url: `https://discordapp.com/api/users/@me`,
+        headers: {
+          'authorization': `bearer ${discordToken}`
+        }
+      }
+
+      request.get(options, function(err, response, body){
+        let parsedBody = JSON.parse(body)
+        console.log(parsedBody)
+      })
+  });
+
+})
+
+
+
 
 // Close Program
 ipcMain.on('close:program', function(){
@@ -103,6 +155,8 @@ ipcMain.on('linktoken:add', function(e, itemThree){
 ipcMain.on('linkopener:start', function() {
 
   client = new Discord.Client();
+
+  discordAuth()
 
   console.log('turning on')
   client.on('ready', () => {
