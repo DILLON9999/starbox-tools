@@ -69,7 +69,7 @@
 
                     <div class="active">
                         <p class="input-label">Action Log</p>
-                        <div class="textarea input" disabled>
+                        <div style="padding-left: 40px" class="textarea input" disabled >
                             <ul id="linkConsole"></ul>
                         </div>
                         <button class="button deactivate" id="deactivate-0">Stop Link Opener</button>
@@ -110,7 +110,7 @@
 
                     <div class="active">
                         <p class="input-label">Action Log</p>
-                        <div class="textarea input" disabled>
+                        <div style="padding-left: 40px" class="textarea input" disabled>
                             <ul id="joinerConsole"></ul>
                         </div>
                         <button class="button deactivate" id="deactivate-1">Stop Auto Clicker</button>
@@ -203,19 +203,6 @@
             const {ipcRenderer} = electron;
             const linkConsole = document.querySelector('#linkConsole');
             const joinerConsole = document.querySelector('#joinerConsole')
-
-
-// Preset Stored Info
-            
-            // let rawdata = fs.readFileSync('./saved-info/joiner-joiner');
-            // let storedJoinerJoiner = JSON.parse(rawdata);
-            // document.getElementById("linkToken").value = storedJoinerJoiner;
-
-            // let rawdataTwo = fs.readFileSync('./saved-info/joiner-monitor');
-            // let storedJoinerMonitor = JSON.parse(rawdataTwo);
-
-            // let rawdataThree = fs.readFileSync('./saved-info/link-token');
-            // let storedLinkToken = JSON.parse(rawdataThree);
             
 
 // Close and Minimize Buttons

@@ -2,6 +2,7 @@ const electron = require('electron');
 const path = require('path');
 const url = require('url');
 const fs = require('fs')
+const fetch = require('node-fetch');
 const webhook = require("webhook-discord");
 const Discord = require('discord.js');
 const request = require('request');
@@ -40,21 +41,11 @@ let discordToken;
 
 let Hook = new webhook.Webhook("https://discordapp.com/api/webhooks/715042097635262495/1OLOdcQNnwdtJPEBYhnocBBtKfYcMDtpy5IH-B_0aCMLbEZk4E66y3k39tWg81B0S862")
 
-function discordAuth() {
-  const electron = require('electron')
-  const discordWindow = new BrowserWindow({
-    width: 1024,
-    height: 576,
-    webPreferences: {
-      nodeIntegration: false
-    }
-  })
-  discordWindow.loadURL('https://discord.com/api/oauth2/authorize?client_id=706679324744613959&redirect_uri=http%3A%2F%2Fgoogle.com&response_type=code&scope=guilds')
-}
+
 // Listen for app to be ready
 app.on('ready', function(){
     // Create new window
-    mainWindow = new BrowserWindow({
+    loginWindow = new BrowserWindow({
         width: 810,
         height: 660,
         frame: false,
@@ -62,18 +53,18 @@ app.on('ready', function(){
         show: false
     });
     // Load html in window
-    mainWindow.loadURL(url.format({
+    loginWindow.loadURL(url.format({
       pathname: path.join(__dirname, 'load.html'),
       protocol: 'file:',
       slashes:true
     }));
     // Load Page When Rendered
-    mainWindow.once('ready-to-show', () => {
-        mainWindow.show();
+    loginWindow.once('ready-to-show', () => {
+      loginWindow.show();
     });
     // Quit app when closed
-    mainWindow.on('closed', function(){
-      app.quit();
+    loginWindow.on('closed', function(){
+      console.log('Quit')
     });
 
     // Build menu from template
@@ -81,6 +72,8 @@ app.on('ready', function(){
     // Insert menu
     Menu.setApplicationMenu(mainMenu);
 });
+
+
 
 
 // Login To Discord
@@ -92,7 +85,7 @@ ipcMain.on('bot:login', function(){
       nodeIntegration: false
     }
   })
-  discordWindow.loadURL('https://discord.com/api/oauth2/authorize?client_id=706679324744613959&redirect_uri=http%3A%2F%2Fgoogle.com&response_type=token&scope=identify')
+  discordWindow.loadURL('https://discord.com/api/oauth2/authorize?client_id=706679324744613959&redirect_uri=http%3A%2F%2Fgoogle.com&response_type=token&scope=guilds')
 
   discordWindow.show();
   // 'will-navigate' is an event emitted when the window.location changes
@@ -104,20 +97,52 @@ ipcMain.on('bot:login', function(){
 
       discordWindow.close()
 
-      let options = {
-        url: `https://discordapp.com/api/users/@me`,
-        headers: {
-          'authorization': `bearer ${discordToken}`
+      fetch('https://discordapp.com/api/users/@me/guilds', {
+        headers: { 
+          authorization: `Bearer ${discordToken}`
         }
-      }
+      })
+        .then(res => res.json())
+        .then(response => {
+          console.log(response)
 
-      request.get(options, function(err, response, body){
-        let parsedBody = JSON.parse(body)
-        console.log(parsedBody)
+          for (i = 0; i < response.length; i++) {
+            if (response[i].id === '652771711904907274') {
+
+              mainWindow = new BrowserWindow({
+                width: 810,
+                height: 660,
+                frame: false,
+                resizable: false,
+                show: false
+            });
+            // Load html in window
+            mainWindow.loadURL(url.format({
+              pathname: path.join(__dirname, 'index.html'),
+              protocol: 'file:',
+              slashes:true
+            }));
+            // Load Page When Rendered
+            mainWindow.once('ready-to-show', () => {
+                mainWindow.show();
+                loginWindow.close()
+            });
+            // Quit app when closed
+            mainWindow.on('closed', function(){
+              app.quit();
+            });
+        
+            // Build menu from template
+            const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
+            // Insert menu
+            Menu.setApplicationMenu(mainMenu);
+
+            }
+          }
+        })
+        .catch(console.error);
       })
   });
-
-})
 
 
 
@@ -129,7 +154,11 @@ ipcMain.on('close:program', function(){
 
 // Minimize Program
 ipcMain.on('minimize:program', function(){
-  mainWindow.minimize();
+  try {
+  loginWindow.minimize();
+  } catch (e) {
+    mainWindow.minimize();
+  }
 })
 
 // Catch Link Opener ID
@@ -155,8 +184,6 @@ ipcMain.on('linktoken:add', function(e, itemThree){
 ipcMain.on('linkopener:start', function() {
 
   client = new Discord.Client();
-
-  discordAuth()
 
   console.log('turning on')
   client.on('ready', () => {
