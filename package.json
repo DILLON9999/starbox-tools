@@ -1,0 +1,36 @@
+{
+  "name": "starbox-tools",
+  "productName": "StarBox Tools",
+  "version": "0.0.1",
+  "description": "A Tool Box With All The Features Needed To Cop",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
+    "package-win": "electron-packager . --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Shopping List\"",
+    "package-linux": "electron-packager . --overwrite --platform=linux --arch=x64 --icon=assets/icons/png/icon.png --prune=true --out=release-builds",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "author": "Dillon#9999",
+  "license": "SBT",
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "path": "^0.12.7",
+    "request": "^2.88.2",
+    "url": "^0.11.0"
+  },
+  "devDependencies": {
+    "electron": "^1.8.8",
+    "electron-builder": "^22.4.1"
+  },
+  "build": {
+    "appId": "starboxtools",
+    "productName": "StarBox Tools",
+    "target": "NSIS",
+    "nsis": {
+      "allowToChangeInstallationDirectory": true,
+      "oneClick": false
+    }
+  }
+}

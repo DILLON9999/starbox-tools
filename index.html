@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="./css/main.css">
+    </head>
+    <body>
+        <div class="app-container">
+            <button class="traffic-light red" id="close"></button>
+            <button class="traffic-light yellow" id="minimize"></button>
+            <div class="sidebar">
+                <p class="title"><span style="color: #FFF">Star</span><span style="color: rgb( 108, 71, 255 );">Box</span></p>
+                <div class="links">
+                    <div class="link-bg" id="link-bg"></div>
+                    <div id="0" class="active-link link">
+                        <img id="img-0" style="height: 30px" src="assets/images/linkopener-selected.svg"/>
+                        <p>Link Opener</p>
+                    </div>
+                    <div id="1" class="link">
+                        <img id="img-1" style="height: 30px" src="assets/images/autoclicker.svg"/>
+                        <p>Auto Clicker</p>
+                    </div>
+                    <div id="2" class="link">
+                        <img id="img-2" style="height: 30px" src="assets/images/autofill.svg"/>
+                        <p>Autofill</p>
+                    </div>
+                    <div id="3" class="link">
+                        <img id="img-3" style="height: 30px" src="assets/images/botsim.svg"/>
+                        <p>Bot Simulator</p>
+                    </div>
+                    <div id="4" class="link">
+                        <img id="img-4" style="height: 30px" src="assets/images/autocheckout.svg"/>
+                        <p>Auto Checkout</p>
+                    </div>
+                </div>
+            </div>
+            <div class="content-container">
+                <div class="screens-container" id='screens-container'>
+
+                    <!-- Link Opener Section -->
+                    <div class="screen" id='page-0'>
+                        <p class="screen-title">Link Opener</p>
+                        <p class="screen-desc"><span style="font-weight: bold;color:rgb( 108, 71, 255 );">Link Opener</span> automatically opens any new links<br/>detected in Discord or Twitter.</p>
+                        
+                        <div class="screen-content" id="page-inner-0">
+                        <div class="inactive">
+
+                        <p class="input-label">Link Source</p>
+                        <form id="linkFormOne">
+                        <input class="input" type="number" id="linkID" placeholder="Input the ID of the channel you would like to monitor."/>
+                        </form>
+
+                        <p class="input-label">Monitor Keywords</p>
+                        <form id="linkFormTwo">
+                        <input class="input" type="text" id="linkKW" placeholder="What keywords would you like the Link Opener to look for?"/>
+                        </form>
+
+                        <p class="input-label">Discord Token</p>
+                        <form id="linkFormThree">
+                        <input class="input" type="text" id="linkToken" placeholder="Input the token of your Discord account without quotation marks."/>
+                        </form>
+
+                        <button class="button activate" id="activate-0">Start Link Opener</button>
+                    </div>
+
+                    <div class="active">
+                        <p class="input-label">Action Log</p>
+                        <div class="textarea input" disabled>
+                            <ul id="linkConsole"></ul>
+                        </div>
+                        <button class="button deactivate" id="deactivate-0">Stop Link Opener</button>
+                    </div>
+                </div>
+            </div>
+
+                    <!-- Auto Clicker Section -->
+                    <div class="screen" id='page-1'>
+                        <p class="screen-title">Auto Clicker</p>
+                        <p class="screen-desc"><span style="font-weight: bold;color:rgb( 108, 71, 255 );">Auto Clicker</span> automatically joins any discord server<br/>where an invite is posted in a specified.</p>
+
+                        <div class="screen-content" id="page-inner-1">
+                        <div class="inactive">
+
+                        <p class="input-label">Delay Between Clicks (ms)</p>
+                        <form id="joinerFormOne">
+                        <input class="input" type="number" min="0" id="joinerDelay" placeholder="1500"/>
+                        </form>
+
+                        <p class="input-label">Invite Source</p>
+                        <form id="joinerFormTwo">
+                        <input class="input" type="number" id="joinerID" placeholder="Input the ID of the channel you would like to monitor."/>
+                        </form>
+
+                        <p class="input-label">Discord Monitor Token</p>
+                        <form id="joinerFormThree">
+                        <input class="input" type="text" id="joinerMonitor" placeholder="Input the token of the account you would like to monitor an invite for."/>
+                        </form>
+
+                        <p class="input-label">Discord Joiner Token</p>
+                        <form id="joinerFormFour">
+                        <input class="input" type="text" id="joinerJoiner" placeholder="Input the token of the account you would like to join the invite with."/>
+                        </form>
+
+                        <button class="button activate" id="activate-1">Start Auto Clicker</button>
+                    </div>
+
+                    <div class="active">
+                        <p class="input-label">Action Log</p>
+                        <div class="textarea input" disabled>
+
+                        </div>
+                        <button class="button deactivate" id="deactivate-1">Stop Auto Clicker</button>
+                    </div>
+                </div>
+            </div>
+
+                    <!-- Autofill Section -->
+                    <div class="screen" id='page-2'>
+                        <p class="screen-title">Autofill</p>
+                        <p class="screen-desc"><span style="font-weight: bold;color:rgb( 108, 71, 255 );">Autofill</span> automatically fills in any user forms<br/>on sites such as Stripe and Shopify.</p>
+                        <p class="input-label">Coming Soon</p>
+                    </div>
+                    
+                    <!-- Bot Simulator Section -->
+                    <div class="screen" id='page-3'>
+                        <p class="screen-title">Bot Simulator</p>
+                        <p class="screen-desc"><span style="font-weight: bold;color:rgb( 108, 71, 255 );">Bot Simulator</span> simulates bot restocks of major bots<br/>to give you more practice and knowledge of the site.</p>
+                        <p class="input-label">Coming Soon</p>
+                    </div>
+
+                    <!-- Auto Checkout Section -->
+                    <div class="screen" id='page-4'>
+                        <p class="screen-title">Auto Checkout</p>
+                        <p class="screen-desc"><span style="font-weight: bold;color:rgb( 108, 71, 255 );">Auto Checkout</span> automatically autofills and checks out<br/>on popular sites to give you the best chance possible.</p>
+                        <p class="input-label">Coming Soon</p>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="js/jquery.easydropdown.min.js"></script>
+        <script>
+            const links = document.getElementsByClassName('link');
+            for (let i = 0; i < links.length; i++) {
+                links[i].addEventListener("click", function () {
+                    img = document.getElementById(`img-${i}`)
+                    img.src = `${img.src.substring(0, img.src.length - 4)}-selected.svg`;
+                    active = document.getElementsByClassName('active-link')[0];
+                    activeimg = document.getElementById(`img-${active.id}`);
+                    activeimg.src = `${activeimg.src.substring(0,activeimg.src.length - 13)}.svg`
+                    activepg = document.getElementById(`page-${active.id}`);
+                    active.classList.toggle('active-link');
+                    links[i].classList.toggle('active-link');
+                    document.getElementById("link-bg").style.top = `${parseInt(i * 60)}px`;
+                    document.getElementById("screens-container").style.top = `${30 - parseInt(i * 613)}px`;
+                });
+            }
+            const activateButtons = document.getElementsByClassName('activate');
+            for (let i = 0; i < activateButtons.length; i++) {
+                activateButtons[i].addEventListener("click", function () {
+                    // Toggle the page (switch to active page)
+                    document.getElementById(`page-inner-${this.id.substring(this.id.length-1)}`).classList.toggle('active');
+                    active[i].value = !active[i].value;
+                });
+            }
+            const deactivateButtons = document.getElementsByClassName('deactivate');
+            for (let i = 0; i < deactivateButtons.length; i++) {
+                deactivateButtons[i].addEventListener("click", function () {
+                    // Toggle the page (switch to inactive page)
+                    document.getElementById(`page-inner-${this.id.substring(this.id.length-1)}`).classList.toggle('active');
+                    active[i].value = !active[i].value;
+                });
+            }
+        </script>
+
+        <script>
+            const electron = require('electron');
+            const {ipcRenderer} = electron;
+            const linkConsole = document.querySelector('#linkConsole');
+
+
+// Close and Minimize Buttons
+
+
+            // Close Program
+            document.querySelector('#close').addEventListener('click', closeProgram);
+
+            function closeProgram(e){
+                e.preventDefault();
+                ipcRenderer.send('close:program')
+            }
+
+            // Minimize Program
+            document.querySelector('#minimize').addEventListener('click', minimizeProgram);
+
+            function minimizeProgram(e){
+                e.preventDefault();
+                ipcRenderer.send('minimize:program')
+            }
+
+
+// Link Opener Commands
+
+
+            // Link Opener Channel ID
+            document.querySelector('#linkFormOne').addEventListener('change', linkIdSubmit);
+
+            function linkIdSubmit(e){
+                e.preventDefault();
+                let itemOne = document.querySelector('#linkID').value;
+                ipcRenderer.send('linkid:add', itemOne);
+            }
+
+            // Link Opener Keyword
+            document.querySelector('#linkFormTwo').addEventListener('change', linkKeywordSubmit);
+
+            function linkKeywordSubmit(e){
+                e.preventDefault();
+                let itemTwo = document.querySelector('#linkKW').value;
+                ipcRenderer.send('linkkw:add', itemTwo);
+            }
+
+            // Link Opener Discord Token
+            document.querySelector('#linkFormThree').addEventListener('change', linkTokenSubmit);
+
+            function linkTokenSubmit(e){
+                e.preventDefault();
+                let itemThree = document.querySelector('#linkToken').value;
+                ipcRenderer.send('linktoken:add', itemThree);
+            }
+
+            // Link Opener Start
+            document.querySelector('#activate-0').addEventListener('click', startLinkOpener);
+
+            function startLinkOpener(e){
+                e.preventDefault();
+                ipcRenderer.send('linkopener:start')
+            }
+
+            // Link Opener Stop
+            document.querySelector('#deactivate-0').addEventListener('click', stopLinkOpener);
+
+            function stopLinkOpener(e){
+                e.preventDefault();
+                ipcRenderer.send('linkopener:stop');
+
+                linkConsole.className = '';
+                linkConsole.innerHTML = '';
+            }
+
+
+// Invite Joiner Commands
+
+
+            // Invite Joiner Delay
+            document.querySelector('#joinerFormOne').addEventListener('change', joinerDelaySubmit);
+
+            function joinerDelaySubmit(e){
+                e.preventDefault();
+                let itemFour = document.querySelector('#joinerDelay').value;
+                ipcRenderer.send('joinerdelay:add', itemFour);
+            }
+
+            // Invite Joiner ID
+            document.querySelector('#joinerFormTwo').addEventListener('change', joinerIDSubmit);
+
+            function joinerIDSubmit(e){
+                e.preventDefault();
+                let itemFive = document.querySelector('#joinerID').value;
+                ipcRenderer.send('joinerid:add', itemFive);
+            }
+
+            // Invite Joiner Monitor Token
+            document.querySelector('#joinerFormThree').addEventListener('change', joinerMonitorSubmit);
+
+            function joinerMonitorSubmit(e){
+                e.preventDefault();
+                let itemSix = document.querySelector('#joinerMonitor').value;
+                ipcRenderer.send('joinermonitor:add', itemSix);
+            }
+
+            // Invite Joiner Joiner Token
+            document.querySelector('#joinerFormFour').addEventListener('change', joinerJoinerSubmit);
+
+            function joinerJoinerSubmit(e){
+                e.preventDefault();
+                let itemSeven = document.querySelector('#joinerJoiner').value;
+                ipcRenderer.send('joinerjoiner:add', itemSeven);
+            }
+
+            // Invite Joiner Start
+            document.querySelector('#activate-1').addEventListener('click', startJoiner);
+
+            function startJoiner(e){
+                e.preventDefault();
+                ipcRenderer.send('joiner:start')
+            }
+
+            // Invite Joiner Stop
+            document.querySelector('#deactivate-1').addEventListener('click', stopJoiner);
+
+            function stopJoiner(e){
+                e.preventDefault();
+                ipcRenderer.send('joiner:stop')
+            }
+
+
+            // Log Commands
+
+
+
+            ipcRenderer.on('link:login', function(e, linkUser){
+                linkConsole.className = 'collection';
+                const li = document.createElement('li');
+                li.className = 'collection-item';
+                const itemText = document.createTextNode('Logged in as: ' + linkUser);
+
+                li.appendChild(itemText);
+                linkConsole.appendChild(li);
+            })
+
+            ipcRenderer.on('link:found', function(e, foundLink){
+                linkConsole.className = 'collection';
+                const li = document.createElement('li');
+                li.className = 'collection-item';
+                const itemText = document.createTextNode('Opening link: ' + foundLink);
+
+                li.appendChild(itemText);
+                linkConsole.appendChild(li);
+            })
+
+        </script>
+    </body>
+</html>

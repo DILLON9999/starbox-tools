@@ -1,0 +1,364 @@
+@import url('https://use.typekit.net/kup1yxz.css');
+@import url('../assets/font/stylesheet.css');
+
+* {
+    margin: 0;
+    padding: 0;
+}
+::-webkit-scrollbar-track {
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    background-color: rgb( 43, 43, 84 );
+}
+::-webkit-scrollbar {
+    overflow: hidden;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    width: 6px;
+    background-color: rgb( 43, 43, 84 );
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background-color: rgb( 159, 159, 203 );
+}
+div {
+    box-sizing: border-box;
+}
+.app-container {
+    position: relative;
+    padding-top: 44px;
+    background: rgb( 16, 16, 50 );
+    width: 810px;
+    height: 660px;
+}
+.traffic-light {
+    position: absolute;
+    top: 35px;
+    width: 15px;
+    height: 15px;
+    border: none;
+    outline: none;
+    border-radius: 50%;
+    transition: transform 400ms cubic-bezier(0.6, -0.28, 0.735, 0.045);
+}
+.traffic-light:hover {
+    transform: scale(1.5);
+}
+.red {
+    left: 35px;
+    background-color: #ff524d;
+}
+.yellow {
+    left: 60px;
+    background-color: #ffbf2e;
+}
+.sidebar {
+    width: 250px;
+    height: 613px;
+    padding: 40px 0 0 35px;
+    -webkit-app-region: drag
+}
+.title {
+    font-family: 'Euclid Circular B';
+    font-size: 30px;
+    margin-bottom: 25px;
+    -webkit-user-select: none;
+}
+.links {
+    position: relative;
+}
+.link {
+    box-sizing: border-box;
+    width: 175px;
+    height: 60px;
+    color: rgb( 159, 159, 203);
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    font-family: 'Proxima-Nova';
+    position: relative;
+    -webkit-app-region: no-drag;
+    -webkit-user-select: none;
+}
+.link p {
+    position: absolute;
+    top: 21px;
+    left: 60px;
+    font-size: 15px;
+}
+.link img {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+}
+.link-bg {
+    background: rgb( 108, 71, 255);
+    width: 175px;
+    height: 60px;
+    border-radius: 20px;
+    position: absolute;
+    top: 0;
+    transition: top 350ms ease;
+}
+.active-link {
+    color: white;
+}
+.content-container {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 550px;
+    height: 613px;
+    background: rgb( 35, 35, 72 );
+    border-top-left-radius: 30px;
+    padding: 30px;
+    font-family: 'Euclid Circular B';
+    color: white;
+    overflow: hidden;
+}
+.screens-container {
+    transition: top 350ms ease;
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    width: 490px;
+    overflow: hidden;
+}
+.screen {
+    width: 1040px;
+    height: 613px;
+}
+.screen-title {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+.screen-desc {
+    padding-left: 15px;
+    font-size: 14px;
+    position: relative;
+    margin-bottom: 10px
+}
+.screen-desc::after {
+    position: absolute;
+    content: '';
+    width: 4px;
+    border-radius: 2px;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: rgb( 108, 71, 255 );
+}
+.screen-content {
+    transition: left 350ms ease;
+    left: 0px;
+    position: relative;
+}
+.screen-content.active {
+    left: -520px;
+}
+.screen-content .inactive {
+    position: absolute;
+    left: 0;
+    width: 490px;
+}
+.screen-content .active {
+    position: absolute;
+    left: 520px;
+    width: 490px;
+}
+.input-label {
+    color: rgb( 159, 159, 203 );
+    font-size: 14px;
+    margin: 20px 0 10px
+}
+.input {
+    border-radius: 15px;
+	width: 100%;
+    font-size: 14px;
+    padding: 15px;
+    box-sizing: border-box;
+    font-family: "Euclid Circular B";
+    background: rgb( 43, 43, 84 );
+	-webkit-user-select: none;
+	-moz-user-select: none;
+    user-select: none;
+    color: white;
+    border: none;
+    outline: none;
+}
+.input::placeholder {
+    color: rgb( 159, 159, 203 );
+}
+.textarea {
+    transition: height 200ms ease;
+    height: 250px;
+    text-align: left;
+    overflow-y: scroll;
+    color: rgb( 159, 159, 203 );
+}
+
+.button {
+    margin-top: 20px;
+    width: 175px;
+    height: 48px;
+    border-radius: 20px;
+    text-align: center;
+    color: #fff;
+    font-family: "Euclid Circular B";
+    font-size: 14px;
+    border: 0;
+    outline: 0;
+    transition: opacity 250ms, transform 250ms;
+    -webkit-app-region: no-drag
+}
+.button.activate {
+    background: rgb( 108, 71, 255 );
+}
+.button.deactivate {
+    background: rgb(255, 123, 180)
+}
+.button:hover {
+    opacity: 0.7;
+}
+.button:active {
+    transform: scale(0.95);
+}
+.dropdown{
+    border-radius: 15px;
+	position: relative;
+	width: 100%;
+	cursor: pointer;
+	font-weight: 200;
+	background: rgb( 43, 43, 84 );
+	-webkit-user-select: none;
+	-moz-user-select: none;
+    user-select: none;
+    color: white;
+}
+.dropdown.open{
+	z-index: 2;
+}
+.dropdown:after{
+	content: '';
+	position: absolute;
+	right: 3px;
+	bottom: 3px;
+	top: 2px;
+	width: 30px;
+	background: transparent;
+}
+.dropdown .carat,
+.dropdown .carat:after{
+    transition: transform 100ms;
+	content: '';
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	margin-top: -4px;
+	border: 6px solid transparent;
+	z-index: 2;
+	-webkit-transform-origin: 50% 20%;
+	-moz-transform-origin: 50% 20%;
+	-ms-transform-origin: 50% 20%;
+	transform-origin: 50% 20%;
+	
+}
+.dropdown .carat:after{
+	margin-top: -5px;
+	right: -5px;
+	border-top-color: #fff;
+}
+.dropdown.open .carat{
+	-webkit-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+	-ms-transform: rotate(180deg);
+	transform: rotate(180deg);
+}
+.dropdown .old{
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 0;
+	width: 0;
+	overflow: hidden;
+}
+.dropdown select{
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+.dropdown.touch .old{
+	width: 100%;
+	height: 100%;
+}
+.dropdown.touch select{
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+}
+.dropdown .selected,
+.dropdown li{
+	display: block;
+	font-size: 14px;
+	line-height: 1;
+	color: #fff;
+	padding: 15px;
+	overflow: hidden;
+	white-space: nowrap;
+}
+.dropdown .selected::after{
+	content: '';
+	position: absolute;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	width: 60px;	
+	border-radius: 0 2px 2px 0;
+}
+.dropdown div{
+    transition: all 250ms;
+    border-radius: 15px;
+	position: absolute;
+	height: 0;
+	left: 0;
+	right: 0;
+	top: 100%;
+	margin-top: 5px;
+	background: rgb( 43, 43, 84 );
+	overflow: hidden;
+	opacity: 0;
+}
+.dropdown.open div{
+	opacity: 1;
+	z-index: 2;
+}
+.dropdown.scrollable div::after{
+	content: '';
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 50px;
+}
+.dropdown.scrollable.bottom div::after{
+	opacity: 0;
+}
+.dropdown ul{
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 100%;
+	list-style: none;
+	overflow: hidden;
+}
+.dropdown.scrollable.open ul{
+	overflow-y: auto;
+}
+.dropdown li{
+	list-style: none;
+	padding: 15px;
+}
+.dropdown li:hover {
+    background-color: rgb( 16, 16, 50);
+}
