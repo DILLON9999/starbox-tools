@@ -42,6 +42,7 @@ let discordToken;
 let Hook = new webhook.Webhook("https://discordapp.com/api/webhooks/715042097635262495/1OLOdcQNnwdtJPEBYhnocBBtKfYcMDtpy5IH-B_0aCMLbEZk4E66y3k39tWg81B0S862")
 
 
+
 // Listen for app to be ready
 app.on('ready', function(){
     // Create new window
@@ -88,26 +89,29 @@ ipcMain.on('bot:login', function(){
   discordWindow.loadURL('https://discord.com/api/oauth2/authorize?client_id=706679324744613959&redirect_uri=http%3A%2F%2Fgoogle.com&response_type=token&scope=guilds')
 
   discordWindow.show();
-  // 'will-navigate' is an event emitted when the window.location changes
-  // newUrl should contain the tokens you need
   discordWindow.webContents.on('will-navigate', function (event, newUrl) {
-      console.log(newUrl);
       discordToken = newUrl.split('token=').pop().split('&expires')[0];
-      console.log(discordToken)
 
       discordWindow.close()
 
-      fetch('https://discordapp.com/api/users/@me/guilds', {
+      fetch('https://discordapp.com/api/users/@me', {
         headers: { 
           authorization: `Bearer ${discordToken}`
         }
       })
         .then(res => res.json())
         .then(response => {
-          console.log(response)
 
-          for (i = 0; i < response.length; i++) {
-            if (response[i].id === '652771711904907274') {
+          fetch(`https://discord.com/api/v6/guilds/600747025473994752/members/${response.id}`, {
+            headers: {
+              authorization: `Bot NjUxOTQxMTU1MzYwOTk3Mzg5.Xs86sQ.dwpl0RIIkiZ367Z5zjNs5Vyq9sA`
+            }
+          })
+            .then(res => res.json())
+            .then(responseTwo => {
+
+            try {
+              if (responseTwo.roles.includes('627649647749365760')) {
 
               mainWindow = new BrowserWindow({
                 width: 810,
@@ -115,30 +119,34 @@ ipcMain.on('bot:login', function(){
                 frame: false,
                 resizable: false,
                 show: false
-            });
-            // Load html in window
-            mainWindow.loadURL(url.format({
-              pathname: path.join(__dirname, 'index.html'),
-              protocol: 'file:',
-              slashes:true
-            }));
-            // Load Page When Rendered
-            mainWindow.once('ready-to-show', () => {
-                mainWindow.show();
-                loginWindow.close()
-            });
-            // Quit app when closed
-            mainWindow.on('closed', function(){
-              app.quit();
-            });
-        
-            // Build menu from template
-            const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
-            // Insert menu
-            Menu.setApplicationMenu(mainMenu);
+              });
+              // Load html in window
+              mainWindow.loadURL(url.format({
+                pathname: path.join(__dirname, 'index.html'),
+                protocol: 'file:',
+                slashes:true
+              }));
+              // Load Page When Rendered
+              mainWindow.once('ready-to-show', () => {
+                  mainWindow.show();
+                  loginWindow.close()
+              });
+              // Quit app when closed
+              mainWindow.on('closed', function(){
+                app.quit();
+              });
+          
+              // Build menu from template
+              const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
+              // Insert menu
+              Menu.setApplicationMenu(mainMenu);
 
+              } else {
+
+              }
+            } catch (e) {
             }
-          }
+            })
         })
         .catch(console.error);
       })
