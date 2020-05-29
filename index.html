@@ -34,7 +34,7 @@
                     </div>
                     <div id="4" class="link">
                         <img id="img-4" style="height: 30px" src="assets/images/autocheckout.svg"/>
-                        <p>Auto Checkout</p>
+                        <p>Settings</p>
                     </div>
                 </div>
             </div>
@@ -134,9 +134,17 @@
 
                     <!-- Auto Checkout Section -->
                     <div class="screen" id='page-4'>
-                        <p class="screen-title">Auto Checkout</p>
-                        <p class="screen-desc"><span style="font-weight: bold;color:rgb( 108, 71, 255 );">Auto Checkout</span> automatically autofills and checks out<br/>on popular sites to give you the best chance possible.</p>
-                        <p class="input-label">Coming Soon</p>
+                        <p class="screen-title">Settings</p>
+                        <p class="screen-desc"><span style="font-weight: bold;color:rgb( 108, 71, 255 );">Settings</span> gives insight into your statistics and information.<br> Setup webhooks here as well.</p>
+
+                        <div class="screen-content" id="page-inner-4">
+                        <div class="inactive">
+
+                        <p class="input-label">Webhook</p>
+                        <form id="webhookForm">
+                        <input class="input" type="text" id="webhook" placeholder="Input a discord Webhook to send your success."/>
+                        </form>
+
                     </div>
                 </div>
                 </div>
@@ -195,6 +203,11 @@
             let storedJoinerJoiner = JSON.parse(rawdata);
             let storedJoinerJoinerText = storedJoinerJoiner.joinerJoinerToken
             document.getElementById("joinerJoiner").value = storedJoinerJoinerText
+
+            let rawdataFour = fs.readFileSync('./saved-info/webhook.json');
+            let storedWebhook = JSON.parse(rawdataFour);
+            let storedWebhookText = storedWebhook.webhook
+            document.getElementById("webhook").value = storedWebhookText
 
         </script>
 
@@ -331,6 +344,18 @@
 
                 joinerConsole.className = '';
                 joinerConsole.innerHTML = '';
+            }
+
+
+// Settings Commands
+
+            // Webhook
+            document.querySelector('#webhookForm').addEventListener('change', webhookSubmit);
+
+            function webhookSubmit(e){
+                e.preventDefault();
+                let itemWebhook = document.querySelector('#webhook').value;
+                ipcRenderer.send('webhook:add', itemWebhook);
             }
 
 

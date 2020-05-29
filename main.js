@@ -23,6 +23,10 @@ let rawdata = fs.readFileSync('./saved-info/joiner-joiner.json');
 let storedJoinerJoiner = JSON.parse(rawdata);
 let storedJoinerJoinerText = storedJoinerJoiner.joinerJoinerToken
 
+let rawdataFour = fs.readFileSync('./saved-info/webhook.json');
+let storedWebhook = JSON.parse(rawdataFour);
+let storedWebhookText = storedWebhook.webhook
+
 let mainWindow;
 
 let linkID;
@@ -39,7 +43,7 @@ let client;
 let clientTwo;
 let discordToken;
 
-let Hook = new webhook.Webhook("https://discordapp.com/api/webhooks/715042097635262495/1OLOdcQNnwdtJPEBYhnocBBtKfYcMDtpy5IH-B_0aCMLbEZk4E66y3k39tWg81B0S862")
+let Hook = new webhook.Webhook(storedWebhookText)
 
 
 
@@ -102,16 +106,16 @@ ipcMain.on('bot:login', function(){
         .then(res => res.json())
         .then(response => {
 
-          fetch(`https://discord.com/api/v6/guilds/600747025473994752/members/${response.id}`, {
+          fetch(`https://discord.com/api/v6/guilds/652771711904907274/members/${response.id}`, {
             headers: {
-              authorization: `Bot NjUxOTQxMTU1MzYwOTk3Mzg5.Xs86sQ.dwpl0RIIkiZ367Z5zjNs5Vyq9sA`
+              authorization: `Bot NzA2Njc5MzI0NzQ0NjEzOTU5.XtBGBQ.8A06p5MSJxotFclMB0AWx5G6qbo`
             }
           })
             .then(res => res.json())
             .then(responseTwo => {
 
             try {
-              if (responseTwo.roles.includes('627649647749365760')) {
+              if (responseTwo.roles.includes('652775737736167464')) {
 
               mainWindow = new BrowserWindow({
                 width: 810,
@@ -169,6 +173,12 @@ ipcMain.on('minimize:program', function(){
   }
 })
 
+
+
+// Link Opener
+
+
+
 // Catch Link Opener ID
 ipcMain.on('linkid:add', function(e, itemOne){
   linkID = itemOne;
@@ -206,17 +216,38 @@ ipcMain.on('linkopener:start', function() {
       if(message.channel.id === linkID) {
       message.embeds.forEach((embed) => {
 
+
         try {
           let fullMessage = embed.description
           let splitMessage = fullMessage.split(/\s+/)
           for (i = 0; i < splitMessage.length; i++) {
             if (splitMessage[i].includes(linkKeyword)) {
               require("electron").shell.openExternal(splitMessage[i]);
+              let foundLink = splitMessage[i]
+              mainWindow.webContents.send('link:found', foundLink);
             }
           }
-      } catch (e) {
-        console.log('No Description')
-      }
+        } catch (e) {
+
+        }
+
+        try {
+          for (i = 0; i < embed.fields.length; i++) {
+            let fullMessage = embed.fields[i].value
+            console.log(fullMessage)
+            let splitMessage = fullMessage.split(/\s+/)
+            for (j = 0; j < splitMessage.length; j++) {
+              if (splitMessage[j].includes(linkKeyword)) {
+                require("electron").shell.openExternal(splitMessage[j]);
+                let foundLink = splitMessage[j]
+                mainWindow.webContents.send('link:found', foundLink);
+              }
+            }
+          }
+        } catch (e) {
+
+        }
+
      });
 
      if (message.content.includes(linkKeyword)) {
@@ -231,7 +262,7 @@ ipcMain.on('linkopener:start', function() {
      }
     }
     })} catch (e) {
-        console.log('Error')
+
     }
 
     client.login(linkToken);
@@ -242,6 +273,14 @@ ipcMain.on('linkopener:stop', function() {
   console.log('turning off')
   client.destroy()
 })
+
+
+
+
+// Invite Joiner
+
+
+
 
 // Catch Invite Joiner Delay
 ipcMain.on('joinerdelay:add', function(e, itemFour){
@@ -331,6 +370,19 @@ ipcMain.on('joiner:start', function(){
 ipcMain.on('joiner:stop', function() {
   console.log('turning off')
   clientTwo.destroy()
+})
+
+
+// Settings
+
+
+// Webhook
+// Catch Webhook
+ipcMain.on('webhook:add', function(e, itemWebhook){
+  webhookTool = itemWebhook;
+  Hook = new webhook.Webhook(webhookTool)
+  console.log(webhookTool)
+  fs.writeFile('./saved-info/webhook.json', `{"webhook": "${webhookTool}"}` , function(err) { } )
 })
 
 // Create menu template
