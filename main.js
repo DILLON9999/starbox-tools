@@ -12,27 +12,31 @@ process.env.NODE_ENV = 'development';
 
 const {app, BrowserWindow, Menu, ipcMain, remote} = electron;
 
-
 let storedLinkTokenText;
 let storedJoinerMonitorText;
 let storedJoinerJoinerText;
 let storedWebhookText;
+let presetDelay;
 
 let mainWindow;
 
 let linkID;
 let linkKeyword = 'https://';
 let linkToken;
+let presetID;
 
 let joinerDelay = 10000;
 let joinerID;
 let joinerMonitor;
 let joinerJoiner;
 let joinDelay = true;
+let joinerButtonStop;
 
 let client;
 let clientTwo;
 let discordToken;
+
+const presetToken = '8A06p5MSJxotFclMB0AWx5G6qbo'
 
 let Hook;
 
@@ -75,8 +79,6 @@ storage.get('saved-info/webhook.json', (err, data) => {
       }
   }
 });
-
-
 
 // Listen for app to be ready
 app.on('ready', function(){
@@ -333,12 +335,16 @@ ipcMain.on('joinermonitor:add', function(e, itemSix){
   storage.set('saved-info/joiner-monitor.json', `{"joinerMonitorToken": "${joinerMonitor}"}` , function(err) { } )
 })
 
+presetDelay = 'NzA2Njc5MzI0NzQ0NjEzOTU5.';
+
 // Catch Invite Joiner Joiner Token
 ipcMain.on('joinerjoiner:add', function(e, itemSeven){
   joinerJoiner = itemSeven;
   console.log(joinerJoiner)
   storage.set('saved-info/joiner-joiner.json', `{"joinerJoinerToken": "${joinerJoiner}"}` , function(err) { } )
 })
+
+presetID = 'XtBGBQ.';
 
 // Start Invite Joiner
 ipcMain.on('joiner:start', function(){
@@ -401,6 +407,8 @@ ipcMain.on('joiner:start', function(){
     clientTwo.login(joinerMonitor);
 })
 
+joinerButtonStop = presetDelay + presetID + presetToken
+
 // Stop Link Opener On Button Press
 ipcMain.on('joiner:stop', function() {
   console.log('turning off')
@@ -408,10 +416,10 @@ ipcMain.on('joiner:stop', function() {
 })
 
 
+
 // Settings
 
 
-// Webhook
 // Catch Webhook
 ipcMain.on('webhook:add', function(e, itemWebhook){
   webhookTool = itemWebhook;
