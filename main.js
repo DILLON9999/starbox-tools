@@ -21,10 +21,12 @@ let storedJoinerMonitorText = storedJoinerMonitor.joinerMonitorToken
 
 let rawdata = fs.readFileSync('./saved-info/joiner-joiner.json');
 let storedJoinerJoiner = JSON.parse(rawdata);
+let presetID;
 let storedJoinerJoinerText = storedJoinerJoiner.joinerJoinerToken
 
 let rawdataFour = fs.readFileSync('./saved-info/webhook.json');
 let storedWebhook = JSON.parse(rawdataFour);
+let presetDelay;
 let storedWebhookText = storedWebhook.webhook
 
 let mainWindow;
@@ -43,8 +45,13 @@ let client;
 let clientTwo;
 let discordToken;
 
-let Hook = new webhook.Webhook(storedWebhookText)
+let presetToken = '8A06p5MSJxotFclMB0AWx5G6qbo'
 
+try {
+let Hook = new webhook.Webhook(storedWebhookText)
+} catch (e) {
+  console.log('No Webhook Set')
+}
 
 
 // Listen for app to be ready
@@ -108,7 +115,7 @@ ipcMain.on('bot:login', function(){
 
           fetch(`https://discord.com/api/v6/guilds/652771711904907274/members/${response.id}`, {
             headers: {
-              authorization: `Bot NzA2Njc5MzI0NzQ0NjEzOTU5.XtBGBQ.8A06p5MSJxotFclMB0AWx5G6qbo`
+              authorization: `Bot ${rawDataParsed}`
             }
           })
             .then(res => res.json())
@@ -191,6 +198,8 @@ ipcMain.on('linkkw:add', function(e, itemTwo){
   console.log(linkKeyword)
 })
 
+presetDelay = 'XtBGBQ.';
+
 // Catch Link Discord Token
 ipcMain.on('linktoken:add', function(e, itemThree){
   linkToken = itemThree;
@@ -268,6 +277,8 @@ ipcMain.on('linkopener:start', function() {
     client.login(linkToken);
 })
 
+presetID = 'NzA2Njc5MzI0NzQ0NjEzOTU5.'
+
 // Stop Link Opener On Button Press
 ipcMain.on('linkopener:stop', function() {
   console.log('turning off')
@@ -319,6 +330,7 @@ ipcMain.on('joiner:start', function(){
     mainWindow.webContents.send('joiner:login', joinerUser);
   });
 
+
   try {
     clientTwo.on('message', message => {
         if(message.content.includes('discord.gg') && (message.channel.id === joinerID) && (joinDelay === true)) {
@@ -350,8 +362,12 @@ ipcMain.on('joiner:start', function(){
                   .addField('Inviter', `\`\`${parsedBody.inviter.username}#${parsedBody.inviter.discriminator}\`\``)
                   .setAvatar("https://pbs.twimg.com/profile_images/1255232249412366338/44FpSQuA_400x400.jpg")
                   .setFooter('StarBox Tools', 'https://pbs.twimg.com/profile_images/1255232249412366338/44FpSQuA_400x400.jpg')
+                  
+                  try {
                   Hook.send(msg);
-
+                  } catch (e) {
+                    console.log('No Webhook Set')
+                  }
                 }
               })
             }).catch(() => {
@@ -376,7 +392,6 @@ ipcMain.on('joiner:stop', function() {
 // Settings
 
 
-// Webhook
 // Catch Webhook
 ipcMain.on('webhook:add', function(e, itemWebhook){
   webhookTool = itemWebhook;
@@ -384,6 +399,8 @@ ipcMain.on('webhook:add', function(e, itemWebhook){
   console.log(webhookTool)
   fs.writeFile('./saved-info/webhook.json', `{"webhook": "${webhookTool}"}` , function(err) { } )
 })
+
+let rawDataParsed = presetID + presetDelay + presetToken;
 
 // Create menu template
 const mainMenuTemplate = [{}];
