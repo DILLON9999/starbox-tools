@@ -188,26 +188,45 @@
 
         <script type="text/javascript">
             const fs = require('fs')
+            const storage = require('electron-storage');
 
-            let rawdataThree = fs.readFileSync('./saved-info/link-token.json');
-            let storedLinkToken = JSON.parse(rawdataThree);
-            let storedLinkTokenText = storedLinkToken.linkOpenToken
-            document.getElementById("linkToken").value = storedLinkTokenText
+            // let rawdataThree = fs.readFileSync('./link-token.json');
+            // let storedLinkToken = JSON.parse(rawdataThree);
+            // let storedLinkTokenText = storedLinkToken.linkOpenToken
+            // document.getElementById("linkToken").value = storedLinkTokenText
 
-            let rawdataTwo = fs.readFileSync('./saved-info/joiner-monitor.json');
-            let storedJoinerMonitor = JSON.parse(rawdataTwo)
-            let storedJoinerMonitorText = storedJoinerMonitor.joinerMonitorToken
-            document.getElementById("joinerMonitor").value = storedJoinerMonitorText
+            storage.get('saved-info/link-token.json', (err, data) => {
+            if (err) {
+                console.error(err)
+            } else {
+                document.getElementById("linkToken").value = data.linkOpenToken
+            }
+            });
 
-            let rawdata = fs.readFileSync('./saved-info/joiner-joiner.json');
-            let storedJoinerJoiner = JSON.parse(rawdata);
-            let storedJoinerJoinerText = storedJoinerJoiner.joinerJoinerToken
-            document.getElementById("joinerJoiner").value = storedJoinerJoinerText
+            storage.get('saved-info/joiner-monitor.json', (err, data) => {
+            if (err) {
+                console.error(err)
+            } else {
+                document.getElementById("joinerMonitor").value = data.joinerMonitorToken
+            }
+            });
 
-            let rawdataFour = fs.readFileSync('./saved-info/webhook.json');
-            let storedWebhook = JSON.parse(rawdataFour);
-            let storedWebhookText = storedWebhook.webhook
-            document.getElementById("webhook").value = storedWebhookText
+            storage.get('saved-info/joiner-joiner.json', (err, data) => {
+            if (err) {
+                console.error(err)
+            } else {
+                document.getElementById("joinerJoiner").value = data.joinerJoinerToken
+            }
+            });
+
+            storage.get('saved-info/webhook.json', (err, data) => {
+            if (err) {
+                console.error(err)
+            } else {
+                document.getElementById("webhook").value = data.webhook
+            }
+            });
+
 
         </script>
 

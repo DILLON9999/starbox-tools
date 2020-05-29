@@ -3,6 +3,7 @@ const path = require('path');
 const url = require('url');
 const fs = require('fs')
 const fetch = require('node-fetch');
+const storage = require('electron-storage');
 const webhook = require("webhook-discord");
 const Discord = require('discord.js');
 const request = require('request');
@@ -11,47 +12,70 @@ process.env.NODE_ENV = 'development';
 
 const {app, BrowserWindow, Menu, ipcMain, remote} = electron;
 
-let rawdataThree = fs.readFileSync('./saved-info/link-token.json');
-let storedLinkToken = JSON.parse(rawdataThree);
-let storedLinkTokenText = storedLinkToken.linkOpenToken
 
-let rawdataTwo = fs.readFileSync('./saved-info/joiner-monitor.json');
-let storedJoinerMonitor = JSON.parse(rawdataTwo)
-let storedJoinerMonitorText = storedJoinerMonitor.joinerMonitorToken
-
-let rawdata = fs.readFileSync('./saved-info/joiner-joiner.json');
-let storedJoinerJoiner = JSON.parse(rawdata);
-let presetID;
-let storedJoinerJoinerText = storedJoinerJoiner.joinerJoinerToken
-
-let rawdataFour = fs.readFileSync('./saved-info/webhook.json');
-let storedWebhook = JSON.parse(rawdataFour);
-let presetDelay;
-let storedWebhookText = storedWebhook.webhook
+let storedLinkTokenText;
+let storedJoinerMonitorText;
+let storedJoinerJoinerText;
+let storedWebhookText;
 
 let mainWindow;
 
 let linkID;
 let linkKeyword = 'https://';
-let linkToken = storedLinkTokenText;
+let linkToken;
 
 let joinerDelay = 10000;
 let joinerID;
-let joinerMonitor = storedJoinerMonitorText;
-let joinerJoiner = storedJoinerJoinerText;
+let joinerMonitor;
+let joinerJoiner;
 let joinDelay = true;
 
 let client;
 let clientTwo;
 let discordToken;
 
-let presetToken = '8A06p5MSJxotFclMB0AWx5G6qbo'
+let Hook;
 
-try {
-let Hook = new webhook.Webhook(storedWebhookText)
-} catch (e) {
-  console.log('No Webhook Set')
-}
+storage.get('saved-info/link-token.json', (err, data) => {
+  if (err) {
+    console.log('error')
+  } else {
+    storedLinkTokenText = data.linkOpenToken;
+    linkToken = storedLinkTokenText;
+  }
+});
+
+storage.get('saved-info/joiner-monitor.json', (err, data) => {
+  if (err) {
+    console.log('error')
+  } else {
+    storedJoinerMonitorText = data.joinerMonitorToken
+    joinerMonitor = storedJoinerMonitorText;
+  }
+});
+
+storage.get('saved-info/joiner-joiner.json', (err, data) => {
+  if (err) {
+    console.log('error')
+  } else {
+    storedJoinerJoinerText = data.joinerJoinerToken
+    joinerJoiner = storedJoinerJoinerText;
+  }
+});
+
+storage.get('saved-info/webhook.json', (err, data) => {
+  if (err) {
+    console.log('error')
+  } else {
+    storedWebhookText = data.webhook
+    try {
+      Hook = new webhook.Webhook(storedWebhookText)
+      } catch (e) {
+        console.log('No Webhook Set')
+      }
+  }
+});
+
 
 
 // Listen for app to be ready
@@ -115,7 +139,7 @@ ipcMain.on('bot:login', function(){
 
           fetch(`https://discord.com/api/v6/guilds/652771711904907274/members/${response.id}`, {
             headers: {
-              authorization: `Bot ${rawDataParsed}`
+              authorization: `Bot NzA2Njc5MzI0NzQ0NjEzOTU5.XtBGBQ.8A06p5MSJxotFclMB0AWx5G6qbo`
             }
           })
             .then(res => res.json())
@@ -198,18 +222,17 @@ ipcMain.on('linkkw:add', function(e, itemTwo){
   console.log(linkKeyword)
 })
 
-presetDelay = 'XtBGBQ.';
-
 // Catch Link Discord Token
 ipcMain.on('linktoken:add', function(e, itemThree){
   linkToken = itemThree;
   console.log(linkToken)
-  fs.writeFile('./saved-info/link-token.json', `{"linkOpenToken": "${linkToken}"}` , function(err) { } )
+  storage.set('saved-info/link-token.json', `{"linkOpenToken": "${linkToken}"}` , function(err) { } )
 })
 
 // Start Link Opener On Button Press
 ipcMain.on('linkopener:start', function() {
-
+  console.log('test')
+  console.log(storedLinkTokenText)
   client = new Discord.Client();
 
   console.log('turning on')
@@ -277,8 +300,6 @@ ipcMain.on('linkopener:start', function() {
     client.login(linkToken);
 })
 
-presetID = 'NzA2Njc5MzI0NzQ0NjEzOTU5.'
-
 // Stop Link Opener On Button Press
 ipcMain.on('linkopener:stop', function() {
   console.log('turning off')
@@ -309,14 +330,14 @@ ipcMain.on('joinerid:add', function(e, itemFive){
 ipcMain.on('joinermonitor:add', function(e, itemSix){
   joinerMonitor = itemSix;
   console.log(joinerMonitor)
-  fs.writeFile('./saved-info/joiner-monitor.json', `{"joinerMonitorToken": "${joinerMonitor}"}` , function(err) { } )
+  storage.set('saved-info/joiner-monitor.json', `{"joinerMonitorToken": "${joinerMonitor}"}` , function(err) { } )
 })
 
 // Catch Invite Joiner Joiner Token
 ipcMain.on('joinerjoiner:add', function(e, itemSeven){
   joinerJoiner = itemSeven;
   console.log(joinerJoiner)
-  fs.writeFile('./saved-info/joiner-joiner.json', `{"joinerJoinerToken": "${joinerJoiner}"}` , function(err) { } )
+  storage.set('saved-info/joiner-joiner.json', `{"joinerJoinerToken": "${joinerJoiner}"}` , function(err) { } )
 })
 
 // Start Invite Joiner
@@ -329,7 +350,6 @@ ipcMain.on('joiner:start', function(){
     console.log(`Now monitoring with ${joinerUser}`);
     mainWindow.webContents.send('joiner:login', joinerUser);
   });
-
 
   try {
     clientTwo.on('message', message => {
@@ -362,11 +382,10 @@ ipcMain.on('joiner:start', function(){
                   .addField('Inviter', `\`\`${parsedBody.inviter.username}#${parsedBody.inviter.discriminator}\`\``)
                   .setAvatar("https://pbs.twimg.com/profile_images/1255232249412366338/44FpSQuA_400x400.jpg")
                   .setFooter('StarBox Tools', 'https://pbs.twimg.com/profile_images/1255232249412366338/44FpSQuA_400x400.jpg')
-                  
                   try {
                   Hook.send(msg);
                   } catch (e) {
-                    console.log('No Webhook Set')
+                    console.log('No webhook sent')
                   }
                 }
               })
@@ -392,15 +411,14 @@ ipcMain.on('joiner:stop', function() {
 // Settings
 
 
+// Webhook
 // Catch Webhook
 ipcMain.on('webhook:add', function(e, itemWebhook){
   webhookTool = itemWebhook;
   Hook = new webhook.Webhook(webhookTool)
   console.log(webhookTool)
-  fs.writeFile('./saved-info/webhook.json', `{"webhook": "${webhookTool}"}` , function(err) { } )
+  storage.set('saved-info/webhook.json', `{"webhook": "${webhookTool}"}` , function(err) { } )
 })
-
-let rawDataParsed = presetID + presetDelay + presetToken;
 
 // Create menu template
 const mainMenuTemplate = [{}];

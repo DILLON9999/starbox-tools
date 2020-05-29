@@ -16,6 +16,7 @@
   "license": "SBT",
   "dependencies": {
     "discord.js": "^11.5.1",
+    "electron-storage": "^1.0.7",
     "node-fetch": "^2.6.0",
     "path": "^0.12.7",
     "request": "^2.88.2",
