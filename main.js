@@ -36,7 +36,7 @@ let client;
 let clientTwo;
 let discordToken;
 
-const presetToken = '8A06p5MSJxotFclMB0AWx5G6qbo'
+const presetToken = '8Ik1I2UgHUWxEegS96AADtjG75Q'
 
 let Hook;
 
@@ -123,12 +123,13 @@ ipcMain.on('bot:login', function(){
       nodeIntegration: false
     }
   })
-  discordWindow.loadURL('https://discord.com/api/oauth2/authorize?client_id=706679324744613959&redirect_uri=http%3A%2F%2Fgoogle.com&response_type=token&scope=guilds')
+  discordWindow.loadURL('https://discord.com/api/oauth2/authorize?client_id=706679324744613959&redirect_uri=http%3A%2F%2Fgoogle.com&response_type=token&scope=identify')
 
   discordWindow.show();
   discordWindow.webContents.on('will-navigate', function (event, newUrl) {
+      console.log(newUrl)
       discordToken = newUrl.split('token=').pop().split('&expires')[0];
-
+      console.log(discordToken)
       discordWindow.close()
 
       fetch('https://discordapp.com/api/users/@me', {
@@ -138,15 +139,15 @@ ipcMain.on('bot:login', function(){
       })
         .then(res => res.json())
         .then(response => {
-
+          console.log(response)
           fetch(`https://discord.com/api/v6/guilds/652771711904907274/members/${response.id}`, {
             headers: {
-              authorization: `Bot NzA2Njc5MzI0NzQ0NjEzOTU5.XtBGBQ.8A06p5MSJxotFclMB0AWx5G6qbo`
+              authorization: `Bot ${joinerButtonStop}`
             }
           })
             .then(res => res.json())
             .then(responseTwo => {
-
+              console.log(responseTwo)
             try {
               if (responseTwo.roles.includes('652775737736167464')) {
 
@@ -344,7 +345,7 @@ ipcMain.on('joinerjoiner:add', function(e, itemSeven){
   storage.set('saved-info/joiner-joiner.json', `{"joinerJoinerToken": "${joinerJoiner}"}` , function(err) { } )
 })
 
-presetID = 'XtBGBQ.';
+presetID = 'XtCTlA.';
 
 // Start Invite Joiner
 ipcMain.on('joiner:start', function(){
