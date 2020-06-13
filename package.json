@@ -1,7 +1,7 @@
 {
   "name": "starbox-tools",
   "productName": "StarBox Tools",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A Tool Box With All The Features Needed To Cop",
   "main": "main.js",
   "scripts": {
