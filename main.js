@@ -20,13 +20,17 @@ let presetDelay;
 
 let mainWindow;
 
-let linkID;
-let linkKeyword = 'https://';
+let linkID = [];
+let linkKeyword = [];
 let linkToken;
 let presetID;
 
+let positiveKeyword = [];
+let negativeKeyword = [];
+let openedLinks = [];
+
 let joinerDelay = 10000;
-let joinerID;
+let joinerID = [];
 let joinerMonitor;
 let joinerJoiner;
 let joinDelay = true;
@@ -35,8 +39,6 @@ let joinerButtonStop;
 let client;
 let clientTwo;
 let discordToken;
-
-let openedLinks = []; 
 
 const presetToken = '8Ik1I2UgHUWxEegS96AADtjG75Q'
 
@@ -217,14 +219,27 @@ ipcMain.on('minimize:program', function(){
 
 // Catch Link Opener ID
 ipcMain.on('linkid:add', function(e, itemOne){
-  linkID = itemOne;
+  linkID = itemOne.split(',');
   console.log(linkID)
 })
 
 // Catch Link Opener Keyword
 ipcMain.on('linkkw:add', function(e, itemTwo){
-  linkKeyword = itemTwo;
-  console.log(linkKeyword)
+positiveKeyword = [];
+negativeKeyword = [];
+linkKeyword = itemTwo.split(',');
+for (i = 0; i < linkKeyword.length; i++) {
+  if (linkKeyword[i].startsWith('+')) {
+    positiveKeyword.push(linkKeyword[i].slice(1))
+  } else if (linkKeyword[i].startsWith('-')) {
+    negativeKeyword.push(linkKeyword[i].slice(1))
+  } else {
+
+  }
+}
+console.log(linkKeyword)
+console.log(negativeKeyword)
+console.log(positiveKeyword)
 })
 
 // Catch Link Discord Token
@@ -250,7 +265,7 @@ ipcMain.on('linkopener:start', function() {
 
   try {
     client.on('message', (message) => {
-      if(message.channel.id === linkID) {
+      if(linkID.includes(message.channel.id)) {
       message.embeds.forEach((embed) => {
 
 
@@ -259,9 +274,9 @@ ipcMain.on('linkopener:start', function() {
           let splitMessage = fullMessage.split(/\s+/)
           for (i = 0; i < splitMessage.length; i++) {
             if (splitMessage[i].includes(linkKeyword)) {
-              openedLinks.push(splitMessage[i])
               require("electron").shell.openExternal(splitMessage[i]);
               let foundLink = splitMessage[i]
+              openedLinks.push(foundLink)
               mainWindow.webContents.send('link:found', foundLink);
             }
           }
@@ -274,16 +289,27 @@ ipcMain.on('linkopener:start', function() {
             let fullMessage = embed.fields[i].value
             let splitMessage = fullMessage.split(/\s+/)
             for (j = 0; j < splitMessage.length; j++) {
-              if (splitMessage[j].includes(linkKeyword)) {
-                if (openedLinks.includes(splitMessage[j])) {
-                  console.log('Link Already Opened')
+
+              for (negKW = 0; negKW < negativeKeyword.length; negKW++) {
+                if (splitMessage[j].includes(negativeKeyword[negKW])) {
                   openedLinks = [];
-                } else {
-                require("electron").shell.openExternal(splitMessage[j]);
-                let foundLink = splitMessage[j]
-                mainWindow.webContents.send('link:found', foundLink);
+                  return;
                 }
               }
+              
+              for (posKW = 0; posKW < positiveKeyword.length; posKW++) {
+                if (splitMessage[j].includes(positiveKeyword[posKW])) {
+                  if (openedLinks.includes(splitMessage[j]) || splitMessage[j].includes('](')) {
+                    openedLinks = [];
+                    return;
+                  }
+                  require("electron").shell.openExternal(splitMessage[j]);
+                  let foundLink = splitMessage[j]
+                  openedLinks.push(foundLink)
+                  mainWindow.webContents.send('link:found', foundLink);
+                }
+              }
+
             }
           }
         } catch (e) {
@@ -292,16 +318,37 @@ ipcMain.on('linkopener:start', function() {
 
      });
 
-     if (message.content.includes(linkKeyword)) {
-       let splitMessage = message.content.split(/\s+/)
-       for (i = 0; i < splitMessage.length; i++) {
-         if (splitMessage[i].includes(linkKeyword) && splitMessage[i].includes('https')) {
-          require("electron").shell.openExternal(splitMessage[i]);
-          let foundLink = splitMessage[i]
-          mainWindow.webContents.send('link:found', foundLink);
+    for (posKW1 = 0; posKW1 < positiveKeyword.length; posKW1++) {
+      if (message.content.includes(positiveKeyword[posKW1])) {
+        let splitMessage = message.content.split(/\s+/)
+        for (i = 0; i < splitMessage.length; i++) {
+ 
+         for (negKW = 0; negKW < negativeKeyword.length; negKW++) {
+           if (splitMessage[i].includes(negativeKeyword[negKW])) {
+            openedLinks = [];
+            return;
+           }
          }
-       }
-     }
+ 
+         for (posKW = 0; posKW < positiveKeyword.length; posKW++) {
+           if (splitMessage[i].includes(positiveKeyword[posKW])) {
+             if (openedLinks.includes(splitMessage[i])) {
+              openedLinks = [];
+              return;
+             }
+             require("electron").shell.openExternal(splitMessage[i]);
+             let foundLink = splitMessage[i]
+             openedLinks.push(foundLink)
+             mainWindow.webContents.send('link:found', foundLink);
+           }
+         }
+ 
+        }
+      }
+    }
+    
+    openedLinks = [];
+
     }
     })} catch (e) {
 
@@ -332,7 +379,7 @@ ipcMain.on('joinerdelay:add', function(e, itemFour){
 
 // Catch Invite Joiner ID
 ipcMain.on('joinerid:add', function(e, itemFive){
-  joinerID = itemFive;
+  joinerID = itemFive.split(',');
   console.log(joinerID)
 })
 
@@ -367,7 +414,7 @@ ipcMain.on('joiner:start', function(){
 
   try {
     clientTwo.on('message', message => {
-        if(message.content.includes('discord.gg') && (message.channel.id === joinerID) && (joinDelay === true)) {
+        if(message.content.includes('discord.gg') && (joinerID.includes(message.channel.id)) && (joinDelay === true)) {
     
           clientTwo.fetchInvite(message.content).then(invite => {
             let discordInvite = invite.toString()
