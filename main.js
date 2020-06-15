@@ -268,47 +268,70 @@ ipcMain.on('linkopener:start', function() {
       if(linkID.includes(message.channel.id)) {
       message.embeds.forEach((embed) => {
 
-
         try {
           let fullMessage = embed.description
           let splitMessage = fullMessage.split(/\s+/)
+          let continueOne = true;
           for (i = 0; i < splitMessage.length; i++) {
-            if (splitMessage[i].includes(linkKeyword)) {
-              require("electron").shell.openExternal(splitMessage[i]);
-              let foundLink = splitMessage[i]
-              openedLinks.push(foundLink)
-              mainWindow.webContents.send('link:found', foundLink);
-            }
-          }
-        } catch (e) {
 
-        }
+            for (posKW = 0; posKW < positiveKeyword.length; posKW++) {
+              if (splitMessage[i].includes(positiveKeyword[posKW])) {
+                console.log(splitMessage[i])
+
+                if (continueOne === true) {
+
+                  for (negKW = 0; negKW < negativeKeyword.length; negKW++) {
+                    if (splitMessage[i].includes(negativeKeyword[negKW])) {
+                     openedLinks = [];
+                     continueOne = false;
+                    }}
+
+                } 
+                
+                if (continueOne === true) {
+                  require("electron").shell.openExternal(splitMessage[i]);
+                  let foundLink = splitMessage[i]
+                  openedLinks.push(foundLink)
+                  mainWindow.webContents.send('link:found', foundLink);
+                }
+              }}
+
+          }
+        } catch (e) { }
 
         try {
           for (i = 0; i < embed.fields.length; i++) {
             let fullMessage = embed.fields[i].value
             let splitMessage = fullMessage.split(/\s+/)
+            let continueOne = true;
             for (j = 0; j < splitMessage.length; j++) {
 
-              for (negKW = 0; negKW < negativeKeyword.length; negKW++) {
-                if (splitMessage[j].includes(negativeKeyword[negKW])) {
-                  openedLinks = [];
-                  return;
-                }
-              }
-              
               for (posKW = 0; posKW < positiveKeyword.length; posKW++) {
                 if (splitMessage[j].includes(positiveKeyword[posKW])) {
-                  if (openedLinks.includes(splitMessage[j]) || splitMessage[j].includes('](')) {
-                    openedLinks = [];
-                    return;
+                  console.log(splitMessage[j])
+  
+                  if (continueOne === true) {
+                    if (openedLinks.includes(splitMessage[j])) {
+                      openedLinks = [];
+                      continueOne = false;
+                    }
                   }
-                  require("electron").shell.openExternal(splitMessage[j]);
-                  let foundLink = splitMessage[j]
-                  openedLinks.push(foundLink)
-                  mainWindow.webContents.send('link:found', foundLink);
-                }
-              }
+
+                  if (continueOne === true) {
+                    for (negKW = 0; negKW < negativeKeyword.length; negKW++) {
+                      if (splitMessage[j].includes(negativeKeyword[negKW])) {
+                       openedLinks = [];
+                       continueOne = false;
+                      }}
+                  } 
+                  
+                  if (continueOne === true) {
+                    require("electron").shell.openExternal(splitMessage[j]);
+                    let foundLink = splitMessage[j]
+                    openedLinks.push(foundLink)
+                    mainWindow.webContents.send('link:found', foundLink);
+                  }
+                }}
 
             }
           }
@@ -321,27 +344,35 @@ ipcMain.on('linkopener:start', function() {
     for (posKW1 = 0; posKW1 < positiveKeyword.length; posKW1++) {
       if (message.content.includes(positiveKeyword[posKW1])) {
         let splitMessage = message.content.split(/\s+/)
+        let continueOne = true;
         for (i = 0; i < splitMessage.length; i++) {
  
-         for (negKW = 0; negKW < negativeKeyword.length; negKW++) {
-           if (splitMessage[i].includes(negativeKeyword[negKW])) {
-            openedLinks = [];
-            return;
-           }
-         }
- 
-         for (posKW = 0; posKW < positiveKeyword.length; posKW++) {
-           if (splitMessage[i].includes(positiveKeyword[posKW])) {
-             if (openedLinks.includes(splitMessage[i])) {
-              openedLinks = [];
-              return;
-             }
-             require("electron").shell.openExternal(splitMessage[i]);
-             let foundLink = splitMessage[i]
-             openedLinks.push(foundLink)
-             mainWindow.webContents.send('link:found', foundLink);
-           }
-         }
+          for (posKW = 0; posKW < positiveKeyword.length; posKW++) {
+            if (splitMessage[i].includes(positiveKeyword[posKW])) {
+              console.log(splitMessage[i])
+
+              if (continueOne === true) {
+                if (openedLinks.includes(splitMessage[i])) {
+                  openedLinks = [];
+                  continueOne = false;
+                }
+              }
+
+              if (continueOne === true) {
+                for (negKW = 0; negKW < negativeKeyword.length; negKW++) {
+                  if (splitMessage[i].includes(negativeKeyword[negKW])) {
+                   openedLinks = [];
+                   continueOne = false;
+                  }}
+              } 
+              
+              if (continueOne === true) {
+                require("electron").shell.openExternal(splitMessage[i]);
+                let foundLink = splitMessage[i]
+                openedLinks.push(foundLink)
+                mainWindow.webContents.send('link:found', foundLink);
+              }
+            }}
  
         }
       }

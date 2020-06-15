@@ -1,7 +1,7 @@
 {
   "name": "starbox-tools",
   "productName": "StarBox Tools",
-  "version": "0.0.2",
+  "version": "1.1.2",
   "description": "A Tool Box With All The Features Needed To Cop",
   "main": "main.js",
   "scripts": {
@@ -28,7 +28,7 @@
     "electron-builder": "^22.4.1"
   },
   "build": {
-    "appId": "starboxtools",
+    "appId": "starbox-tools",
     "productName": "StarBox Tools",
     "target": "NSIS",
     "nsis": {
