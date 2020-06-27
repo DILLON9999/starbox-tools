@@ -36,8 +36,12 @@ let joinerJoiner;
 let joinDelay = true;
 let joinerButtonStop;
 
+let nitroToken;
+let nitroDelay = true;
+
 let client;
 let clientTwo;
+let clientThree;
 let discordToken;
 
 const presetToken = '8Ik1I2UgHUWxEegS96AADtjG75Q'
@@ -81,6 +85,15 @@ storage.get('saved-info/webhook.json', (err, data) => {
       } catch (e) {
         console.log('No Webhook Set')
       }
+  }
+});
+
+storage.get('saved-info/nitro-token.json', (err, data) => {
+  if (err) {
+    console.log('error')
+  } else {
+    storedNitroToken = data.nitroToken
+    nitroToken = storedNitroToken;
   }
 });
 
@@ -323,7 +336,14 @@ ipcMain.on('linkopener:start', function() {
                        openedLinks = [];
                        continueOne = false;
                       }}
-                  } 
+                  }
+
+                  if (continueOne === true) {
+                    if (splitMessage[j].includes('](')) {
+                      openedLinks = [];
+                      continueOne = false;
+                    }
+                  }
                   
                   if (continueOne === true) {
                     require("electron").shell.openExternal(splitMessage[j]);
@@ -498,6 +518,74 @@ ipcMain.on('joiner:stop', function() {
   console.log('turning off')
   clientTwo.destroy()
 })
+
+
+
+
+// Nitro Claimer
+
+
+
+// Catch Nitro Claimer Discord Token
+ipcMain.on('nitroMonitor:add', function(e, itemEight){
+  nitroToken = itemEight;
+  console.log(nitroToken)
+  storage.set('saved-info/nitro-token.json', `{"nitroToken": "${nitroToken}"}` , function(err) { } )
+})
+
+
+// Start Nitro Claimer
+ipcMain.on('nitro:start', function () {
+
+  clientThree = new Discord.Client();
+
+  clientThree.on('ready', () => {
+    const nitroUser = clientThree.user.tag
+    console.log(`Now monitoring with ${nitroUser}`);
+    mainWindow.webContents.send('nitro:login', nitroUser);
+  });
+
+  try {
+    clientThree.on('message', message => {
+      if ( (message.content.includes('discord.gift') || message.content.includes('discordapp.com/gifts/')) && (nitroDelay === true) ) {
+
+        mainWindow.webContents.send('nitro:found')
+        nitroDelay = false;
+
+        let code = '';
+
+        code = message.content.split("discordapp.com/gifts/").pop();
+        code = code.replace(/\s+/g," ");
+        code = code.split(' ')[0];
+
+        let options2 = {
+          url: `https://discordapp.com/api/v6/entitlements/gift-codes/${code}/redeem`,
+          headers: {
+            'Authorization': nitroToken
+          }
+        }
+
+        request.post(options2)
+        setTimeout(() => { nitroDelay = true; }, 10000);
+
+      }
+    })
+  } catch (e) { }
+
+  clientThree.login(nitroToken)
+
+})
+
+// Stop Nitro Claimer On Button Press
+ipcMain.on('nitro:stop', function() {
+  console.log('turning off')
+  clientThree.destroy()
+})
+
+
+
+
+
 
 
 

@@ -26,7 +26,7 @@
                     </div>
                     <div id="2" class="link">
                         <img id="img-2" style="height: 30px" src="assets/images/autofill.svg"/>
-                        <p>Autofill</p>
+                        <p>Nitro Claimer</p>
                     </div>
                     <div id="3" class="link">
                         <img id="img-3" style="height: 30px" src="assets/images/botsim.svg"/>
@@ -118,13 +118,40 @@
                 </div>
             </div>
 
-                    <!-- Autofill Section -->
+
+
+                    <!-- Nitro Claimer Section -->
                     <div class="screen" id='page-2'>
-                        <p class="screen-title">Autofill</p>
-                        <p class="screen-desc"><span style="font-weight: bold;color:rgb( 108, 71, 255 );">Autofill</span> automatically fills in any user forms<br/>on sites such as Stripe and Shopify.</p>
-                        <p class="input-label">Coming Soon</p>
+
+
+                        <p class="screen-title">Nitro Claimer</p>
+                        <p class="screen-desc"><span style="font-weight: bold;color:rgb( 108, 71, 255 );">Nitro Claimer</span> automatically monitors all channels<br/>and claims any nitros gifted.</p>
+
+                        <div class="screen-content" id="page-inner-2">
+                        <div class="inactive">
+
+                        <p class="input-label">Discord Monitor Token</p>
+                        <form id="nitroFormOne">
+                        <input class="input" type="text" id="nitroMonitor" placeholder="Input the token of the account you would like nitros for."/>
+                        </form>
+
+                        <button class="button activate" id="activate-2">Start Nitro Claimer</button>
+
+                        </div>
+
+                        <div class="active">
+                            <p class="input-label">Action Log</p>
+                            <div style="padding-left: 40px" class="textarea input" disabled>
+                                <ul id="nitroConsole"></ul>
+                            </div>
+                            <button class="button deactivate" id="deactivate-2">Stop Nitro Claimer</button>
+                        </div>
+
+                        </div>
                     </div>
                     
+
+
                     <!-- Bot Simulator Section -->
                     <div class="screen" id='page-3'>
                         <p class="screen-title">Bot Simulator</p>
@@ -142,7 +169,7 @@
 
                         <p class="input-label">Webhook</p>
                         <form id="webhookForm">
-                        <input class="input" type="text" id="webhook" placeholder="Input a discord Webhook to send your success."/>
+                        <input class="input" type="text" id="webhook" placeholder="Input a Discord Webhook to send your success."/>
                         </form>
 
                     </div>
@@ -227,6 +254,14 @@
             }
             });
 
+            storage.get('saved-info/nitro-token.json', (err, data) => {
+            if (err) {
+                console.error(err)
+            } else {
+                document.getElementById("nitroMonitor").value = data.nitroToken
+            }
+            });
+
 
         </script>
 
@@ -235,6 +270,7 @@
             const {ipcRenderer} = electron;
             const linkConsole = document.querySelector('#linkConsole');
             const joinerConsole = document.querySelector('#joinerConsole')
+            const nitroConsole = document.querySelector('#nitroConsole')
             
 
 // Close and Minimize Buttons
@@ -366,6 +402,38 @@
             }
 
 
+
+// Nitro Claimer Commands
+
+            // Nitro Claimer Monitor Token
+            document.querySelector('#nitroFormOne').addEventListener('change', nitroMonitorSubmit);
+
+            function nitroMonitorSubmit(e){
+                e.preventDefault();
+                let itemEight = document.querySelector('#nitroMonitor').value;
+                ipcRenderer.send('nitroMonitor:add', itemEight);
+            }
+
+            // Nitro Claimer Start
+            document.querySelector('#activate-2').addEventListener('click', startNitro);
+
+            function startNitro(e){
+                e.preventDefault();
+                ipcRenderer.send('nitro:start')
+            }            
+
+            // Nitro Claimer Stop
+            document.querySelector('#deactivate-2').addEventListener('click', stopNitro);
+
+            function stopNitro(e){
+                e.preventDefault();
+                ipcRenderer.send('nitro:stop')
+
+                nitroConsole.className = '';
+                nitroConsole.innerHTML = '';
+            }
+
+
 // Settings Commands
 
             // Webhook
@@ -414,6 +482,17 @@
                 joinerConsole.appendChild(li);
             })
 
+            // Logging Into Nitro Claimer
+            ipcRenderer.on('nitro:login', function(e, nitroUser){
+                nitroConsole.className = 'collection';
+                const li = document.createElement('li');
+                li.className = 'collection-item';
+                const itemText = document.createTextNode('Logged in as: ' + nitroUser)
+
+                li.appendChild(itemText);
+                nitroConsole.appendChild(li);
+            })            
+
             // Auto Joiner Success
             ipcRenderer.on('joiner:success', function(e, successfulJoin){
                 joinerConsole.className = 'collection';
@@ -423,6 +502,17 @@
 
                 li.appendChild(itemText);
                 joinerConsole.appendChild(li);
+            })
+
+            // Nitro Found
+            ipcRenderer.on('nitro:found', function(e, successfulJoin){
+                nitroConsole.className = 'collection';
+                const li = document.createElement('li');
+                li.className = 'collection-item';
+                const itemText = document.createTextNode('Nitro found, attempting claim')
+
+                li.appendChild(itemText)
+                nitroConsole.appendChild(li)
             })
 
         </script>
