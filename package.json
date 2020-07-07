@@ -24,7 +24,7 @@
     "webhook-discord": "^3.7.3"
   },
   "devDependencies": {
-    "electron": "^1.8.8",
+    "electron": "^7.2.4",
     "electron-builder": "^22.4.1"
   },
   "build": {
